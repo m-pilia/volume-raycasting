@@ -1,5 +1,7 @@
 # GPU-accelerated single-pass raycaster
 
+![screenshot](https://user-images.githubusercontent.com/8300317/43370649-35fc6d96-9383-11e8-99b5-885f74435480.png)
+
 This project is a simple visualiser based on GPU-accelerated single-pass
 [volumetric raycasting](https://en.wikipedia.org/wiki/Volume_ray_casting),
 implemented in [GLSL](https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language)
