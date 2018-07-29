@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>shaders/isosurface.vert</file>
+        <file>shaders/isosurface.frag</file>
+        <file>shaders/alpha_blending.frag</file>
+        <file>shaders/alpha_blending.vert</file>
+        <file>shaders/maximum_intensity_projection.vert</file>
+        <file>shaders/maximum_intensity_projection.frag</file>
+    </qresource>
+</RCC>
