@@ -121,6 +121,8 @@ private:
     GLfloat m_threshold;                          /*!< Isosurface intensity threshold. */
     QColor m_background;                          /*!< Viewport background colour. */
 
+    const GLfloat m_gamma = 2.2f; /*!< Gamma correction parameter. */
+
     RayCastVolume *m_raycasting_volume;
 
     std::map<QString, QOpenGLShaderProgram*> m_shaders;

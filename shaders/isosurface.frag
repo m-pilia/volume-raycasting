@@ -44,6 +44,8 @@ uniform float threshold;
 uniform sampler3D volume;
 uniform sampler2D jitter;
 
+uniform float gamma;
+
 // Ray
 struct Ray {
     vec3 origin;
@@ -104,7 +106,7 @@ void main()
     ray_start += step_vector * texture(jitter, gl_FragCoord.xy / viewport_size).r;
 
     vec3 position = ray_start;
-    vec3 colour = background_colour;
+    vec3 colour = pow(background_colour, vec3(gamma));
 
     // Ray march until reaching the end of the volume
     while (ray_length > 0) {
@@ -138,5 +140,5 @@ void main()
     }
 
     // Gamma correction
-    a_colour.rgb = pow(colour, vec3(1.0 / 2.2));
+    a_colour.rgb = pow(colour, vec3(1.0 / gamma));
 }

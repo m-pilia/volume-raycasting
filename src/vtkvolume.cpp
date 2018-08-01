@@ -30,6 +30,33 @@
 
 #include "vtkvolume.h"
 
+
+/*!
+ * \brief Create an empty volume.
+ */
+VTKVolume::VTKVolume()
+{
+}
+
+
+/*!
+ * \brief Create a volume from file.
+ * \param filename File to be loaded.
+ */
+VTKVolume::VTKVolume(const std::string& filename)
+{
+    load_volume(filename);
+}
+
+
+/*!
+ * \brief Destructor.
+ */
+VTKVolume::~VTKVolume()
+{
+}
+
+
 /*!
  * \brief Check whether the architecture is little endian.
  * \return `true` if little endian, `false` if big endian.
@@ -160,7 +187,7 @@ void VTKVolume::read_dimensions(const std::vector<std::string> &header)
             if (3 != std::sscanf(it->c_str(), "%*s %d %d %d", &width, &height, &depth)) {
                 throw VTKReadError("Cannot read volume dimension.");
             }
-            m_dimensions = QVector3D(width, height, depth);
+            m_size = {width, height, depth};
         }
     }
 }
@@ -178,7 +205,7 @@ void VTKVolume::read_origin(const std::vector<std::string> &header)
             if (3 != std::sscanf(it->c_str(), "%*s %f %f %f", &ox, &oy, &oz)) {
                 throw VTKReadError("Cannot read volume origin.");
             }
-            m_origin = QVector3D(ox, oy, oz);
+            m_origin = {ox, oy, oz};
         }
     }
 }
@@ -196,7 +223,7 @@ void VTKVolume::read_spacing(const std::vector<std::string> &header)
             if (3 != std::sscanf(it->c_str(), "%*s %f %f %f", &sx, &sy, &sz)) {
                 throw VTKReadError("Cannot read volume spacing.");
             }
-            m_spacing = QVector3D(sx, sy, sz);
+            m_spacing = {sx, sy, sz};
         }
     }
 }
@@ -261,10 +288,10 @@ void VTKVolume::read_data_type(const std::vector<std::string> &header)
  * \brief Load a volume from file.
  * \param filename Name of the file.
  */
-void VTKVolume::load_volume(const QString &filename)
+void VTKVolume::load_volume(const std::string& filename)
 {
     // Open file
-    std::ifstream file(filename.toStdString(), std::ios::binary);
+    std::ifstream file(filename, std::ios::binary);
     if (!file.is_open()) {
         throw VTKReadError("Cannot open file.");
     }
@@ -308,7 +335,7 @@ void VTKVolume::load_volume(const QString &filename)
     read_spacing(header);
 
     // Read data
-    size_t element_count = m_dimensions[0] * m_dimensions[1] * m_dimensions[2];
+    size_t element_count = std::get<0>(m_size) * std::get<1>(m_size) * std::get<2>(m_size);
     const bool binary = is_binary(header);
     switch (m_datatype) {
     case VTKVolume::DataType::Int8:
@@ -351,7 +378,7 @@ void VTKVolume::load_volume(const QString &filename)
  * \brief Cast the data to `unsigned char` and normalise it to [0, 255].
  */
 void VTKVolume::uint8_normalised(void) {
-    size_t element_count = m_dimensions.x() * m_dimensions.y() * m_dimensions.z();
+    size_t element_count = std::get<0>(m_size) * std::get<1>(m_size) * std::get<2>(m_size);
     std::vector<unsigned char> normal_data;
     normal_data.resize(element_count);
 
@@ -390,16 +417,4 @@ void VTKVolume::uint8_normalised(void) {
 
     m_data = std::move(normal_data);
     m_datatype = DataType::Uint8;
-}
-
-
-/*!
- * \brief Scale factor to model space.
- *
- * Scale the bounding box such that the longest side equals 1.
- */
-float VTKVolume::scale_factor(void)
-{
-    auto e = m_dimensions * m_spacing;
-    return std::max({e.x(), e.y(), e.z()});
 }

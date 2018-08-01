@@ -158,6 +158,7 @@ void RayCastCanvas::raycasting(const QString& shader)
         m_shaders[shader]->setUniformValue("material_colour", m_diffuseMaterial);
         m_shaders[shader]->setUniformValue("step_length", m_stepLength);
         m_shaders[shader]->setUniformValue("threshold", m_threshold);
+        m_shaders[shader]->setUniformValue("gamma", m_gamma);
         m_shaders[shader]->setUniformValue("volume", 0);
         m_shaders[shader]->setUniformValue("jitter", 1);
 

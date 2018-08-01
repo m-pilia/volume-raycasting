@@ -22,6 +22,9 @@
 
 
 #include "raycastvolume.h"
+#include "vtkvolume.h"
+
+#include <QRegularExpression>
 
 #include <algorithm>
 #include <cmath>
@@ -77,15 +80,34 @@ RayCastVolume::~RayCastVolume()
 {
 }
 
-#include <iostream>
+
 /*!
  * \brief Load a volume from file.
  * \param File to be loaded.
  */
 void RayCastVolume::load_volume(const QString& filename) {
+    std::vector<unsigned char> data;
 
-    VTKVolume::load_volume(filename);
-    uint8_normalised();
+    QRegularExpression re {"^.*\\.([^\\.]+)$"};
+    QRegularExpressionMatch match = re.match(filename);
+
+    if (!match.hasMatch()) {
+        throw std::runtime_error("Cannot determine file extension.");
+    }
+
+    const std::string extension {match.captured(1).toLower().toStdString()};
+    if ("vtk" == extension) {
+        VTKVolume volume {filename.toStdString()};
+        volume.uint8_normalised();
+        m_size = QVector3D(std::get<0>(volume.size()), std::get<1>(volume.size()), std::get<2>(volume.size()));
+        m_origin = QVector3D(std::get<0>(volume.origin()), std::get<1>(volume.origin()), std::get<2>(volume.origin()));
+        m_spacing = QVector3D(std::get<0>(volume.spacing()), std::get<1>(volume.spacing()), std::get<2>(volume.spacing()));
+        m_range = volume.range();
+        data = volume.data();
+    }
+    else {
+        throw std::runtime_error("Unrecognised extension '" + extension + "'.");
+    }
 
     glDeleteTextures(1, &m_volume_texture);
     glGenTextures(1, &m_volume_texture);
@@ -95,9 +117,8 @@ void RayCastVolume::load_volume(const QString& filename) {
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);  // The default alignment is 4, but the texels are 1 byte
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, nx(), ny(), nz(), 0, GL_RED, GL_UNSIGNED_BYTE, data());
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);  // The rray on the host has 1 byte alignment
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, m_size.x(), m_size.y(), m_size.z(), 0, GL_RED, GL_UNSIGNED_BYTE, data.data());
     glBindTexture(GL_TEXTURE_3D, 0);
 }
 
@@ -140,4 +161,25 @@ void RayCastVolume::paint(void)
     glActiveTexture(GL_TEXTURE1); glBindTexture(GL_TEXTURE_2D, m_noise_texture);
 
     m_cube_vao.paint();
+}
+
+
+/*!
+ * \brief Range of the image, in intensity value.
+ * \return A pair, holding <minimum, maximum>.
+ */
+std::pair<double, double> RayCastVolume::range() {
+    return m_range;
+}
+
+
+/*!
+ * \brief Scale factor to model space.
+ *
+ * Scale the bounding box such that the longest side equals 1.
+ */
+float RayCastVolume::scale_factor(void)
+{
+    auto e = m_size * m_spacing;
+    return std::max({e.x(), e.y(), e.z()});
 }
