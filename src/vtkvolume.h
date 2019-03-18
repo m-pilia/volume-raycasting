@@ -88,7 +88,7 @@ public:
      * \brief Range of the image, in intensity value.
      * \return A pair, holding <minimum, maximum>.
      */
-    constexpr std::pair<double, double> range(void) const {
+    const std::pair<double, double> range(void) const {
         return m_range;
     }
 
@@ -96,7 +96,7 @@ public:
      * \brief Range of the image, in intensity value.
      * \return A pair, holding <minimum, maximum>.
      */
-    constexpr std::tuple<size_t, size_t, size_t> size(void) const {
+    const std::tuple<size_t, size_t, size_t> size(void) const {
         return m_size;
     }
 
@@ -104,7 +104,7 @@ public:
      * \brief Range of the image, in intensity value.
      * \return A pair, holding <minimum, maximum>.
      */
-    constexpr std::tuple<float, float, float> origin(void) const {
+    const std::tuple<float, float, float> origin(void) const {
         return m_origin;
     }
 
@@ -112,7 +112,7 @@ public:
      * \brief Range of the image, in intensity value.
      * \return A pair, holding <minimum, maximum>.
      */
-    constexpr std::tuple<float, float, float> spacing(void) const {
+    const std::tuple<float, float, float> spacing(void) const {
         return m_spacing;
     }
 
