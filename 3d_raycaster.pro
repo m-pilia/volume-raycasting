@@ -51,8 +51,8 @@ RESOURCES += \
 
 DISTFILES +=
 
-QMAKE_CXXFLAGS += -std=c++17
+gcc:QMAKE_CXXFLAGS += -std=c++17
+gcc:QMAKE_CXXFLAGS_RELEASE += -fopenmp -Ofast
+gcc:LIBS += -fopenmp
 
-QMAKE_CXXFLAGS_RELEASE += -fopenmp -Ofast
-
-LIBS += -fopenmp
+msvc:QMAKE_CXXFLAGS_RELEASE += /openmp /O2
