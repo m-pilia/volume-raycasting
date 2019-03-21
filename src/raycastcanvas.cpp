@@ -45,6 +45,7 @@ QVector3D to_vector3d(const QColor& colour) {
  */
 RayCastCanvas::RayCastCanvas(QWidget *parent)
     : QOpenGLWidget {parent}
+    , m_raycasting_volume {nullptr}
 {
     // Register the rendering modes here, so they are available to the UI when it is initialised
     m_modes["Isosurface"] = [&]() { RayCastCanvas::raycasting("Isosurface"); };
