@@ -88,7 +88,7 @@ RayCastVolume::~RayCastVolume()
 void RayCastVolume::load_volume(const QString& filename) {
     std::vector<unsigned char> data;
 
-    QRegularExpression re {"^.*\\.([^\\.]+)$"};
+    static QRegularExpression re {"^.*\\.([^\\.]+)$"};
     QRegularExpressionMatch match = re.match(filename);
 
     if (!match.hasMatch()) {
