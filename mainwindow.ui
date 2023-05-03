@@ -59,7 +59,7 @@
     </size>
    </property>
    <property name="windowTitle">
-    <string>Co&amp;ntrols</string>
+    <string>Controls</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
