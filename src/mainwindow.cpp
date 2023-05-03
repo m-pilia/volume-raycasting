@@ -35,8 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // Set inital values
-    ui->stepLength->valueChanged(ui->stepLength->value());
-    ui->threshold_slider->valueChanged(ui->threshold_slider->value());
+    emit ui->stepLength->valueChanged(ui->stepLength->value());
+    emit ui->threshold_slider->valueChanged(ui->threshold_slider->value());
     ui->canvas->setBackground(Qt::black);
 
     // Populate list of visualisation modes
@@ -99,7 +99,7 @@ void MainWindow::load_volume(const QString& path)
         auto range = ui->canvas->getRange();
         ui->threshold_spinbox->setMinimum(range.first);
         ui->threshold_spinbox->setMaximum(range.second);
-        ui->threshold_slider->valueChanged(ui->threshold_slider->value());
+        emit ui->threshold_slider->valueChanged(ui->threshold_slider->value());
     }
     catch (std::runtime_error& e) {
         QMessageBox::warning(this, tr("Error"), tr("Cannot load volume ") + path + ": " + e.what());
