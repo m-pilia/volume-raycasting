@@ -26,7 +26,7 @@
 #include <cstring>
 #include <vector>
 #include <string>
-#include <limits.h>
+#include <limits>
 
 #include "vtkvolume.h"
 
