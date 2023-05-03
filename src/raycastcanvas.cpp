@@ -227,7 +227,7 @@ void RayCastCanvas::mouseReleaseEvent(QMouseEvent *event)
  */
 void RayCastCanvas::wheelEvent(QWheelEvent * event)
 {
-    m_distExp += event->delta();
+    m_distExp += event->angleDelta().y();
     if (m_distExp < -1800)
         m_distExp = -1800;
     if (m_distExp > 600)
